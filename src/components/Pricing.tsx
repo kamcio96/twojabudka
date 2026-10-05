@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Check, Clock, Star, Users, Gift } from 'lucide-react';
+import { Camera, Check, Clock, Star, Users, Gift } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 
 // Mapowanie nazw ikon na komponenty
@@ -9,11 +9,20 @@ const iconMap: Record<string, JSX.Element> = {
   Gift: <Gift className="text-gold-500" size={32} />,
 };
 
+interface Package {
+  name: string;
+  duration: string;
+  isPopular: boolean;
+  features: string[];
+  gradient: string;
+  icon: string;
+}
+
 const Pricing: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isVisible = useScrollAnimation(sectionRef, 0.1);
 
-  const [packages, setPackages] = useState<any[]>([]);
+  const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -101,7 +110,7 @@ const Pricing: React.FC = () => {
                         </div>
 
                         <ul className="space-y-3 mb-8 flex-grow">
-                          {pkg.features.map((feature: string, fIndex: number) => (
+                          {pkg.features.map((feature, fIndex) => (
                               <li
                                   key={fIndex}
                                   className={`flex items-start ${

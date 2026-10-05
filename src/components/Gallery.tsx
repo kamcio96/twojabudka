@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 
@@ -25,101 +25,103 @@ const galleryImages = [
   }
 ];
 
+// Keep in sync with the duration-500 class on the slide track
+const SLIDE_DURATION_MS = 500;
+
+// Matches the Tailwind breakpoints used for slide widths: w-full / sm:w-1/2 / md:w-1/3
+const getSlidesPerView = () => {
+  if (window.matchMedia('(min-width: 768px)').matches) return 3;
+  if (window.matchMedia('(min-width: 640px)').matches) return 2;
+  return 1;
+};
+
 const Gallery: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [animate, setAnimate] = useState(true);
+  const [slidesPerView, setSlidesPerView] = useState(getSlidesPerView);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  
+  const isTransitioning = useRef(false);
+
   const sectionRef = useRef<HTMLDivElement>(null);
-  const autoPlayRef = useRef<NodeJS.Timeout>();
   const isVisible = useScrollAnimation(sectionRef, 0.1);
 
-  const startAutoPlay = () => {
-    autoPlayRef.current = setInterval(() => {
-      if (!isTransitioning) {
-        setIsTransitioning(true);
-        setCurrentIndex(prev => prev + 1);
-      }
-    }, 5000);
-  };
-
-  const stopAutoPlay = () => {
-    if (autoPlayRef.current) {
-      clearInterval(autoPlayRef.current);
-    }
-  };
-
   useEffect(() => {
-    startAutoPlay();
-    return () => stopAutoPlay();
+    const handleResize = () => setSlidesPerView(getSlidesPerView());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleTransitionEnd = () => {
-    if (currentIndex >= galleryImages.length) {
-      setIsTransitioning(false);
-      setCurrentIndex(0);
-    } else if (currentIndex < 0) {
-      setIsTransitioning(false);
-      setCurrentIndex(galleryImages.length - 1);
-    } else {
-      setIsTransitioning(false);
-    }
-  };
+  const slide = useCallback((direction: 1 | -1) => {
+    if (isTransitioning.current) return;
+    isTransitioning.current = true;
+    setAnimate(true);
+    setCurrentIndex(prev => prev + direction);
+    setTimeout(() => {
+      isTransitioning.current = false;
+    }, SLIDE_DURATION_MS);
+  }, []);
 
-  const nextSlide = () => {
-    if (isTransitioning) return;
-    stopAutoPlay();
-    setIsTransitioning(true);
-    setCurrentIndex(prev => prev + 1);
-    startAutoPlay();
-  };
+  // Past either end of the real images: once the slide finishes, jump without animation
+  // to the equivalent position in the middle copy
+  useEffect(() => {
+    if (currentIndex >= 0 && currentIndex < galleryImages.length) return;
+    const timer = setTimeout(() => {
+      setAnimate(false);
+      setCurrentIndex((currentIndex + galleryImages.length) % galleryImages.length);
+    }, SLIDE_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, [currentIndex]);
 
-  const prevSlide = () => {
-    if (isTransitioning) return;
-    stopAutoPlay();
-    setIsTransitioning(true);
-    setCurrentIndex(prev => prev - 1);
-    startAutoPlay();
-  };
+  // Autoplay; restarts after every slide change, so manual navigation resets the timer
+  useEffect(() => {
+    if (lightboxOpen) return;
+    const timer = setTimeout(() => slide(1), 5000);
+    return () => clearTimeout(timer);
+  }, [currentIndex, lightboxOpen, slide]);
+
+  // Re-enable the transition one frame after an instant jump
+  useEffect(() => {
+    if (animate) return;
+    const frame = requestAnimationFrame(() => setAnimate(true));
+    return () => cancelAnimationFrame(frame);
+  }, [animate]);
 
   const openLightbox = (index: number) => {
-    stopAutoPlay();
     setLightboxIndex(index);
     setLightboxOpen(true);
-    document.body.style.overflow = 'hidden';
   };
 
-  const closeLightbox = () => {
-    setLightboxOpen(false);
-    document.body.style.overflow = '';
-    startAutoPlay();
-  };
+  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
 
-  const nextLightboxImage = () => {
+  const nextLightboxImage = useCallback(() => {
     setLightboxIndex((prevIndex) => 
       (prevIndex + 1) % galleryImages.length
     );
-  };
+  }, []);
 
-  const prevLightboxImage = () => {
+  const prevLightboxImage = useCallback(() => {
     setLightboxIndex((prevIndex) => 
       (prevIndex - 1 + galleryImages.length) % galleryImages.length
     );
-  };
+  }, []);
 
   useEffect(() => {
+    if (!lightboxOpen) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!lightboxOpen) return;
-      
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowRight') nextLightboxImage();
       if (e.key === 'ArrowLeft') prevLightboxImage();
     };
 
+    document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxOpen]);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [lightboxOpen, closeLightbox, nextLightboxImage, prevLightboxImage]);
 
   // Create a circular array of images for infinite scrolling
   const displayImages = [...galleryImages, ...galleryImages, ...galleryImages];
@@ -144,11 +146,10 @@ const Gallery: React.FC = () => {
         <div className={`relative ${isVisible ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000`}>
           <div className="relative overflow-hidden">
             <div 
-              className="flex transition-transform duration-500 ease-in-out"
+              className={`flex ${animate ? 'transition-transform duration-500 ease-in-out' : ''}`}
               style={{ 
-                transform: `translateX(-${(currentIndex + offset) * (100 / 3)}%)`,
+                transform: `translateX(-${(currentIndex + offset) * (100 / slidesPerView)}%)`,
               }}
-              onTransitionEnd={handleTransitionEnd}
             >
               {displayImages.map((image, index) => (
                 <div 
@@ -171,14 +172,14 @@ const Gallery: React.FC = () => {
 
           <button 
             className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-navy-900 p-2 rounded-full shadow-md hover:bg-gold-500 hover:text-white transition-colors duration-300"
-            onClick={prevSlide}
+            onClick={() => slide(-1)}
             aria-label="Previous slide"
           >
             <ChevronLeft size={24} />
           </button>
           <button 
             className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-navy-900 p-2 rounded-full shadow-md hover:bg-gold-500 hover:text-white transition-colors duration-300"
-            onClick={nextSlide}
+            onClick={() => slide(1)}
             aria-label="Next slide"
           >
             <ChevronRight size={24} />

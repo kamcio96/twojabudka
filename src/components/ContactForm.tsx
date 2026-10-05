@@ -111,7 +111,7 @@ const ContactForm: React.FC = () => {
         setTimeout(() => {
           setSubmitted(false);
         }, 5000);
-      } catch (error) {
+      } catch {
         setSubmitError('Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie później.');
       } finally {
         setIsSubmitting(false);
