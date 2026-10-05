@@ -28,7 +28,10 @@ const Footer: React.FC = () => {
                 >
                   <img 
                     src="https://www.weselezklasa.pl/banery/Weselezklasa/button230x50bialetlo.png" 
-                    alt="Twoja Budka w katalogu Wesele z Klasą" 
+                    alt="Twoja Budka w katalogu Wesele z Klasą"
+                    width={230}
+                    height={50}
+                    loading="lazy"
                     className="h-[50px] w-auto"
                   />
                 </a>
@@ -79,7 +82,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-white/10 py-6 text-center opacity-80">
           <p>
             &copy; {new Date().getFullYear()} Twoja Budka. Wszystkie prawa zastrzeżone. 
-            Stworzone z <Heart size={14} className="inline-block text-pink-500 mx-1" aria-label="sercem" /> dla wyjątkowych momentów.
+            Stworzone z <Heart size={14} className="inline-block text-pink-500 mx-1" role="img" aria-label="sercem" /> dla wyjątkowych momentów.
           </p>
         </div>
       </div>

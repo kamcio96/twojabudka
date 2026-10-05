@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Check } from 'lucide-react';
 import { business } from '../content/business';
+import { photo } from '../lib/images';
 
 const HIGHLIGHTS = ['Nielimitowana liczba zdjęć', 'Wydruki na miejscu', 'Asystent i rekwizyty'];
 
@@ -12,16 +13,10 @@ const PRINTS = [
 ];
 
 const Hero: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
   return (
     <section
       id="top"
-      className={`relative bg-gradient-navy text-white overflow-hidden ${isVisible ? 'is-visible' : ''}`}
+      className="relative bg-gradient-navy text-white overflow-hidden"
     >
       {/* Delikatna złota poświata, bez dodatkowych kolorów */}
       <div
@@ -32,22 +27,22 @@ const Hero: React.FC = () => {
       <div className="container mx-auto px-4 relative pt-28 pb-16 md:pt-32 md:pb-24 lg:min-h-[100svh] lg:flex lg:items-center">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full">
           <div className="max-w-xl">
-            <p className="reveal eyebrow text-gold-500 mb-5">
+            <p className="hero-reveal eyebrow text-gold-500 mb-5">
               <span className="hidden sm:inline">{business.name} · </span>
               {business.area}
             </p>
 
             <h1
-              className="reveal font-playfair font-bold tracking-tight leading-[1.08] text-4xl md:text-6xl lg:text-7xl mb-6"
-              style={{ transitionDelay: '0.1s' }}
+              className="hero-reveal font-playfair font-bold tracking-tight leading-[1.08] text-4xl md:text-6xl lg:text-7xl mb-6"
+              style={{ animationDelay: '0.1s' }}
             >
               Fotobudka na wesela{' '}
               <span className="text-gold-500">w {business.mainCityLocative}</span>
             </h1>
 
             <p
-              className="reveal text-lg md:text-xl text-white/85 mb-8 max-w-lg"
-              style={{ transitionDelay: '0.2s' }}
+              className="hero-reveal text-lg md:text-xl text-white/85 mb-8 max-w-lg"
+              style={{ animationDelay: '0.2s' }}
             >
               Wyjątkowe wspomnienia dla gości w każdym wieku. Na wesela, urodziny, studniówki
               i imprezy firmowe przywozimy fotobudkę, rekwizyty i asystenta, a Ty bawisz się
@@ -55,8 +50,8 @@ const Hero: React.FC = () => {
             </p>
 
             <ul
-              className="reveal flex flex-wrap gap-x-6 gap-y-2 mb-10 text-white/90"
-              style={{ transitionDelay: '0.3s' }}
+              className="hero-reveal flex flex-wrap gap-x-6 gap-y-2 mb-10 text-white/90"
+              style={{ animationDelay: '0.3s' }}
             >
               {HIGHLIGHTS.map(item => (
                 <li key={item} className="flex items-center gap-2">
@@ -67,8 +62,8 @@ const Hero: React.FC = () => {
             </ul>
 
             <div
-              className="reveal flex flex-col sm:flex-row gap-4"
-              style={{ transitionDelay: '0.4s' }}
+              className="hero-reveal flex flex-col sm:flex-row gap-4"
+              style={{ animationDelay: '0.4s' }}
             >
               <a
                 href="#contact"
@@ -85,13 +80,11 @@ const Hero: React.FC = () => {
           </div>
 
           {/* Mobile i tablet: jedno zdjęcie pod tekstem */}
-          <div className="reveal lg:hidden" style={{ transitionDelay: '0.5s' }}>
+          <div className="hero-reveal lg:hidden" style={{ animationDelay: '0.5s' }}>
             <div className="bg-white p-2 pb-8 rounded-sm shadow-print max-w-md mx-auto">
               <img
-                src={PRINTS[2].src}
+                {...photo(PRINTS[2].src, '(min-width: 480px) 448px, calc(100vw - 48px)')}
                 alt={PRINTS[2].alt}
-                width={1600}
-                height={1066}
                 className="w-full aspect-[3/2] object-cover"
               />
             </div>
@@ -102,11 +95,11 @@ const Hero: React.FC = () => {
             {PRINTS.map((print, index) => (
               <div
                 key={print.src}
-                className={`reveal absolute ${print.className} bg-white p-2.5 pb-10 rounded-sm shadow-print`}
-                style={{ transitionDelay: `${0.3 + index * 0.15}s` }}
+                className={`hero-reveal absolute ${print.className} bg-white p-2.5 pb-10 rounded-sm shadow-print`}
+                style={{ animationDelay: `${0.3 + index * 0.15}s` }}
               >
                 <img
-                  src={print.src}
+                  {...photo(print.src, '360px')}
                   alt={print.alt}
                   className="w-full aspect-[3/2] object-cover"
                 />

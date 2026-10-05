@@ -68,6 +68,23 @@ p {
   .is-visible .reveal {
     @apply opacity-100 translate-y-0;
   }
+
+  /* Hero: wejście po załadowaniu strony w czystym CSS (bez czekania na JS), żeby nagłówek
+     i lead były widoczne od pierwszego renderu HTML (LCP). Opóźnienie: style animationDelay. */
+  .hero-reveal {
+    animation: hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -82,6 +99,7 @@ p {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     transition-delay: 0ms !important;
+    animation-delay: 0ms !important;
   }
 
   .reveal {

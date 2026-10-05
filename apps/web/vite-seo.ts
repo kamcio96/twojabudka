@@ -1,4 +1,5 @@
-// SEO/GEO dla SPA: wszystko, co boty (Google, crawlery AI bez JS) muszą zobaczyć w surowym HTML.
+// SEO/GEO: <head>, dane strukturalne i pliki dla botów (robots, sitemap, llms.txt, 404).
+// Treść strony trafia do HTML przez prerender (src/entry-server.tsx + prerender.mjs).
 // Dane wyłącznie z src/content (business, seo, packages) — bez ręcznie wpisanych kontaktów.
 // SEO_NOINDEX=true (np. środowisko testowe) → meta noindex i robots.txt blokujący wszystko.
 import type { HtmlTagDescriptor, Plugin } from 'vite';
@@ -107,28 +108,6 @@ const headTags = (noindex: boolean): HtmlTagDescriptor[] => {
   ];
 };
 
-// Treść w #root przed startem Reacta (createRoot ją podmienia). Ten sam tekst co na stronie,
-// ukryty wizualnie, żeby nie mignął przed załadowaniem aplikacji.
-const fallbackHtml = () => {
-  const li = (items: readonly string[]) => items.map(i => `<li>${esc(i)}</li>`).join('');
-  return `<div class="sr-only">
-      <h1>Fotobudka na wesela w ${esc(business.mainCityLocative)} – ${esc(business.name)}</h1>
-      <p>${esc(seo.summary)}</p>
-      <h2>Co dostajesz</h2>
-      <ul>${li(seo.highlights)}</ul>
-      <h2>Pakiety</h2>
-      <ul>${packages.map(p => `<li>${esc(`${p.name} (${p.duration}): ${p.features.join(', ')}`)}</li>`).join('')}</ul>
-      <p>${esc(seo.pricing)}</p>
-      <h2>Gdzie dojeżdżamy</h2>
-      <p>${esc(`Dojeżdżamy ${business.area}: ${business.cities.join(', ')}.`)}</p>
-      <h2>Częste pytania</h2>
-      ${faq.map(f => `<h3>${esc(f.question)}</h3><p>${esc(f.answer)}</p>`).join('\n      ')}
-      <h2>Kontakt</h2>
-      <p>Telefon: <a href="${business.phoneHref}">${esc(business.phone)}</a>,
-        e-mail: <a href="mailto:${business.email}">${esc(business.email)}</a>.</p>
-    </div>`;
-};
-
 // Boty AI wymienione z nazwy, żeby jednoznacznie wiedziały, że mogą czytać i cytować stronę (GEO).
 // Bot z własną grupą ignoruje grupę `*`, więc grupa AI powtarza te same reguły.
 const aiBots = [
@@ -197,11 +176,17 @@ Firma dojazdowa: przyjeżdżamy z fotobudką na miejsce imprezy.
 ${faq.map(f => `### ${f.question}\n${f.answer}`).join('\n\n')}
 
 ## Kontakt
-- Strona: ${homeUrl}
-- Telefon: ${business.phone}
-- E-mail: ${business.email}
-- Formularz wyceny: ${abs('/#contact')}
-${[...Object.values(business.social), ...Object.values(business.google)].map(url => `- ${url}`).join('\n')}
+- [Strona Twoja Budka](${homeUrl}): oferta, pakiety, galeria
+- [Formularz wyceny](${abs('/#contact')}): data, miejsce i okazja
+- [Telefon ${business.phone}](${business.phoneHref})
+- [E-mail ${business.email}](mailto:${business.email})
+
+## Profile
+- [Facebook](${business.social.facebook})
+- [Instagram](${business.social.instagram})
+- [Wesele z Klasą](${business.social.weselezklasa})
+- [Opinie w Google — Koszalin](${business.google.koszalin})
+- [Opinie w Google — Szczecin](${business.google.szczecin})
 `;
 
 // Samodzielna strona 404 (nginx), bez JS i zewnętrznych zasobów.
@@ -243,16 +228,19 @@ const notFoundHtml = () => `<!doctype html>
 
 export default function seoPlugin(): Plugin {
   const noindex = process.env.SEO_NOINDEX === 'true';
+  let ssrBuild = false;
   return {
     name: 'twojabudka-seo',
+    configResolved(config) {
+      ssrBuild = Boolean(config.build.ssr);
+    },
     transformIndexHtml: {
       order: 'pre',
-      handler: html => ({
-        html: html.replace('<!--seo-fallback-->', fallbackHtml()),
-        tags: headTags(noindex),
-      }),
+      handler: () => headTags(noindex),
     },
     generateBundle() {
+      // Build SSR (prerender) nie publikuje plików — tylko build klienta.
+      if (ssrBuild) return;
       const files: Record<string, string> = {
         'robots.txt': robotsTxt(noindex),
         'sitemap.xml': sitemapXml(),

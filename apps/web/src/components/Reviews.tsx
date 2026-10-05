@@ -44,7 +44,7 @@ const Reviews: React.FC = () => {
             >
               <figure className="h-full flex flex-col bg-gray-50 rounded-xl p-6 md:p-8">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex gap-0.5 text-gold-ink" aria-label="Ocena 5 na 5">
+                  <div className="flex gap-0.5 text-gold-ink" role="img" aria-label="Ocena 5 na 5">
                     {Array.from({ length: 5 }, (_, i) => (
                       <Star key={i} size={16} fill="currentColor" strokeWidth={0} aria-hidden="true" />
                     ))}

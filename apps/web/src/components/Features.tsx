@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { Printer, Palette, UserRound, Sparkles, Infinity as InfinityIcon, Images } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
+import { photo } from '../lib/images';
 
 // Tylko fakty z oferty (src/content/packages.ts); bez liczb, których nie podał właściciel
 const features = [
@@ -61,10 +62,8 @@ const Features: React.FC = () => {
 
           <figure className="reveal lg:col-start-1 lg:col-span-5 lg:row-start-1 lg:row-span-2 lg:self-start lg:sticky lg:top-28">
             <img
-              src="/images/3.webp"
+              {...photo('/images/3.webp', '(min-width: 1024px) 480px, 100vw')}
               alt="Starsza para w kapeluszach i okularach-serduszkach pozuje w fotobudce"
-              width={1600}
-              height={1066}
               loading="lazy"
               decoding="async"
               className="w-full aspect-[4/3] lg:aspect-[4/5] object-cover rounded-2xl shadow-card"

@@ -9,9 +9,6 @@ import ServiceArea from './components/ServiceArea';
 import Faq from './components/Faq';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
-import { hotjar } from 'react-hotjar';
-
-hotjar.initialize({id: 6409555, sv: 6});
 
 function App() {
   return (

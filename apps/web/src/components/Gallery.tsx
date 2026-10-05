@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, X, Expand } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import { business } from '../content/business';
+import { photo } from '../lib/images';
 
 // TODO: więcej zdjęć z realizacji (10–15, różne okazje) — patrz docs/TODO.md
 const galleryImages = [
@@ -10,26 +11,31 @@ const galleryImages = [
     alt: 'Goście wesela w maskach, kapeluszach i okularach pozują z rekwizytami',
     // Układ mozaiki: duże zdjęcie na początku
     tile: 'col-span-2 lg:row-span-2',
+    sizes: '(min-width: 1024px) 840px, 100vw',
   },
   {
     src: '/images/4.webp',
     alt: 'Stolik z kwiatami, ulotkami i tabliczką Twoja Budka przy fotobudce',
     tile: 'row-span-2',
+    sizes: '(min-width: 1024px) 420px, 50vw',
   },
   {
     src: '/images/2.webp',
     alt: 'Para młoda całuje się w fotobudce, w rękach tabliczki „Gorzko, gorzko!”',
     tile: '',
+    sizes: '(min-width: 1024px) 420px, 50vw',
   },
   {
     src: '/images/3.webp',
     alt: 'Starsza para w kapeluszach i okularach-serduszkach pozuje w fotobudce',
     tile: '',
+    sizes: '(min-width: 1024px) 420px, 50vw',
   },
   {
     src: '/images/5.webp',
     alt: 'Roześmiani znajomi w okularach-serduszkach na osiemnastce',
     tile: 'col-span-2 lg:col-span-1',
+    sizes: '(min-width: 1024px) 420px, 100vw',
   },
 ];
 
@@ -122,7 +128,7 @@ const Gallery: React.FC = () => {
                 aria-label={`Powiększ zdjęcie: ${image.alt}`}
               >
                 <img
-                  src={image.src}
+                  {...photo(image.src, image.sizes)}
                   alt={image.alt}
                   loading="lazy"
                   decoding="async"
