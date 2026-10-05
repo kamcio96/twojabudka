@@ -90,6 +90,18 @@ describe('POST /api/contact', () => {
     const { app } = setup();
     expect((await app.request('/api/health')).status).toBe(200);
   });
+
+  it('działa też bez prefiksu /api (Coolify obcina prefiks)', async () => {
+    const { app, send } = setup();
+    expect((await app.request('/health')).status).toBe(200);
+    const res = await app.request('/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(valid),
+    });
+    expect(res.status).toBe(200);
+    expect(send).toHaveBeenCalledOnce();
+  });
 });
 
 describe('Discord', () => {

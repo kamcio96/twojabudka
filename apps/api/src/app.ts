@@ -13,7 +13,7 @@ export interface AppDeps {
 }
 
 export function createApp({ config, send, now = Date.now }: AppDeps) {
-  const app = new Hono();
+  const api = new Hono();
   const limiter = createRateLimiter(config.rateLimitMax, config.rateLimitWindowMs, now);
 
   const deliver =
@@ -43,10 +43,10 @@ export function createApp({ config, send, now = Date.now }: AppDeps) {
     }
   };
 
-  app.get('/api/health', (c) => c.json({ ok: true }));
+  api.get('/health', (c) => c.json({ ok: true }));
 
-  app.post(
-    '/api/contact',
+  api.post(
+    '/contact',
     bodyLimit({
       maxSize: 16 * 1024,
       onError: (c) => c.json<ContactResponse>({ ok: false, error: 'bad_request' }, 413),
@@ -87,6 +87,12 @@ export function createApp({ config, send, now = Date.now }: AppDeps) {
       return c.json<ContactResponse>({ ok: true });
     },
   );
+
+  // Pod /api (proxy nginx w usłudze web) i bez prefiksu (domena w Coolify przypisana
+  // bezpośrednio do usługi api z obcinaniem prefiksu /api).
+  const app = new Hono();
+  app.route('/api', api);
+  app.route('/', api);
 
   app.notFound((c) => c.json({ ok: false, error: 'not_found' }, 404));
   app.onError((err, c) => {
