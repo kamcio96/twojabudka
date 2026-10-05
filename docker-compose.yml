@@ -1,0 +1,29 @@
+# Coolify: typ aplikacji „Docker Compose”, domenę przypisz do usługi `web` (port 80).
+# Zmienne środowiskowe ustaw w Coolify (Coolify wykrywa je z ${...} poniżej).
+# Lokalnie: `docker compose up --build` (zmienne z pliku .env obok tego pliku).
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    expose:
+      - "80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    expose:
+      - "3000"
+    environment:
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
+      DISCORD_MENTION_USER_IDS: ${DISCORD_MENTION_USER_IDS:-}
+      DISCORD_USERNAME: ${DISCORD_USERNAME:-Twoja Budka}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-5}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-600000}
+      # Traefik (Coolify) + nginx (web) dopisują się do X-Forwarded-For.
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-2}
+    restart: unless-stopped
