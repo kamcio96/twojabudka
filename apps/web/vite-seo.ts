@@ -129,14 +129,36 @@ const fallbackHtml = () => {
     </div>`;
 };
 
+// Boty AI wymienione z nazwy, żeby jednoznacznie wiedziały, że mogą czytać i cytować stronę (GEO).
+// Bot z własną grupą ignoruje grupę `*`, więc grupa AI powtarza te same reguły.
+const aiBots = [
+  // OpenAI
+  'GPTBot', 'OAI-SearchBot', 'ChatGPT-User',
+  // Anthropic
+  'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'anthropic-ai',
+  // Perplexity
+  'PerplexityBot', 'Perplexity-User',
+  // Google (Gemini, AI Overviews) i Apple (Apple Intelligence)
+  'Google-Extended', 'GoogleOther', 'Applebot', 'Applebot-Extended',
+  // Microsoft (Copilot korzysta z Binga), Meta, Amazon, DuckDuckGo
+  'Bingbot', 'meta-externalagent', 'meta-externalfetcher', 'FacebookBot', 'Amazonbot', 'DuckAssistBot',
+  // Pozostałe modele i zbiory danych
+  'MistralAI-User', 'cohere-ai', 'cohere-training-data-crawler', 'Bytespider', 'CCBot', 'YouBot',
+  'Diffbot', 'AI2Bot', 'Timpibot',
+];
+
+const rules = ['Allow: /', 'Disallow: /api/'];
+
 const robotsTxt = (noindex: boolean) =>
   noindex
     ? 'User-agent: *\nDisallow: /\n'
     : [
-        // Wszystkie boty, także AI (GPTBot, ClaudeBot, PerplexityBot, Google-Extended), mogą czytać stronę.
         'User-agent: *',
-        'Allow: /',
-        'Disallow: /api/',
+        ...rules,
+        '',
+        '# Asystenci i wyszukiwarki AI: zapraszamy do czytania i cytowania strony.',
+        ...aiBots.map(bot => `User-agent: ${bot}`),
+        ...rules,
         '',
         `Sitemap: ${abs('/sitemap.xml')}`,
         '',
