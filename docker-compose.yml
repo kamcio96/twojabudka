@@ -12,6 +12,8 @@ services:
         VITE_UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
         # Opcjonalnie: liczyć tylko na tych domenach (po przecinku).
         VITE_UMAMI_DOMAINS: ${UMAMI_DOMAINS:-}
+        # SEO: "true" na środowisku testowym (noindex), puste na produkcji.
+        SEO_NOINDEX: ${SEO_NOINDEX:-}
     expose:
       - "80"
     depends_on:

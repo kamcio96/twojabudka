@@ -4,6 +4,9 @@ import Features from './components/Features';
 import Gallery from './components/Gallery';
 import HowItWorks from './components/HowItWorks';
 import Pricing from './components/Pricing';
+import Reviews from './components/Reviews';
+import ServiceArea from './components/ServiceArea';
+import Faq from './components/Faq';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
 import { hotjar } from 'react-hotjar';
@@ -26,6 +29,9 @@ function App() {
         <Gallery />
         <HowItWorks />
         <Pricing />
+        <Reviews />
+        <ServiceArea />
+        <Faq />
         <ContactForm />
       </main>
       <Footer />

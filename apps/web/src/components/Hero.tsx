@@ -41,15 +41,17 @@ const Hero: React.FC = () => {
               className="reveal font-playfair font-bold tracking-tight leading-[1.08] text-4xl md:text-6xl lg:text-7xl mb-6"
               style={{ transitionDelay: '0.1s' }}
             >
-              Fotobudka na wesela <span className="text-gold-500">i imprezy</span>
+              Fotobudka na wesela{' '}
+              <span className="text-gold-500">w {business.mainCityLocative}</span>
             </h1>
 
             <p
               className="reveal text-lg md:text-xl text-white/85 mb-8 max-w-lg"
               style={{ transitionDelay: '0.2s' }}
             >
-              Wyjątkowe wspomnienia dla gości w każdym wieku. Przywozimy fotobudkę, rekwizyty
-              i asystenta, a Ty bawisz się razem z gośćmi.
+              Wyjątkowe wspomnienia dla gości w każdym wieku. Na wesela, urodziny, studniówki
+              i imprezy firmowe przywozimy fotobudkę, rekwizyty i asystenta, a Ty bawisz się
+              razem z gośćmi.
             </p>
 
             <ul

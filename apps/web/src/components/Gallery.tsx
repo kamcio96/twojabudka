@@ -123,7 +123,7 @@ const Gallery: React.FC = () => {
               >
                 <img
                   src={image.src}
-                  alt=""
+                  alt={image.alt}
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 ease-brand group-hover:scale-105"

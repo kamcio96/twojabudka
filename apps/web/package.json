@@ -11,11 +11,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/montserrat": "^5.3.0",
+    "@fontsource/playfair-display": "^5.3.0",
+    "@twojabudka/shared": "*",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-hotjar": "^6.3.1",
-    "@twojabudka/shared": "*"
+    "react-hotjar": "^6.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",

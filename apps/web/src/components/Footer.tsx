@@ -14,21 +14,21 @@ const Footer: React.FC = () => {
                 <span className="text-2xl font-playfair font-semibold">Twoja Budka</span>
               </div>
               <p className="opacity-80 mb-6">
-                Wynajem fotobudki z wydrukami i asystentem na wesela, urodziny, studniówki i imprezy
-                firmowe. Dojeżdżamy {business.area}.
+                Wynajem fotobudki z wydrukami i asystentem w {business.mainCityLocative} i okolicach:
+                wesela, urodziny, studniówki i imprezy firmowe. Dojeżdżamy {business.area}.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <SocialIcon icon={<Facebook size={20} />} href={business.social.facebook} label="Twoja Budka na Facebooku" />
                 <SocialIcon icon={<Instagram size={20} />} href={business.social.instagram} label="Twoja Budka na Instagramie" />
                 <a 
-                  href="https://www.weselezklasa.pl/ogloszenia-weselne/twoja-budka,57901/" 
+                  href={business.social.weselezklasa}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="focus-ring rounded hover:opacity-80 transition-opacity duration-300"
                 >
                   <img 
                     src="https://www.weselezklasa.pl/banery/Weselezklasa/button230x50bialetlo.png" 
-                    alt="Wesele z Klasą" 
+                    alt="Twoja Budka w katalogu Wesele z Klasą" 
                     className="h-[50px] w-auto"
                   />
                 </a>
@@ -42,6 +42,8 @@ const Footer: React.FC = () => {
                 <FooterLink href="#gallery">Galeria</FooterLink>
                 <FooterLink href="#how-it-works">Jak to działa</FooterLink>
                 <FooterLink href="#pricing">Pakiety</FooterLink>
+                <FooterLink href="#reviews">Opinie</FooterLink>
+                <FooterLink href="#faq">Częste pytania</FooterLink>
                 <FooterLink href="#contact">Kontakt</FooterLink>
               </ul>
             </div>

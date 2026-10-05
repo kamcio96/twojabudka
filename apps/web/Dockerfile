@@ -13,6 +13,9 @@ ARG VITE_UMAMI_URL=""
 ARG VITE_UMAMI_WEBSITE_ID=""
 ARG VITE_UMAMI_DOMAINS=""
 ENV VITE_UMAMI_URL=$VITE_UMAMI_URL VITE_UMAMI_WEBSITE_ID=$VITE_UMAMI_WEBSITE_ID VITE_UMAMI_DOMAINS=$VITE_UMAMI_DOMAINS
+# SEO: "true" na środowisku testowym → noindex i robots.txt blokujący boty.
+ARG SEO_NOINDEX=""
+ENV SEO_NOINDEX=$SEO_NOINDEX
 RUN npm run build --workspace=@twojabudka/web
 
 FROM nginx:1.27-alpine

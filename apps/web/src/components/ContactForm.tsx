@@ -120,7 +120,7 @@ const ContactForm: React.FC = () => {
   return (
     <section
       id="contact"
-      className="section-padding bg-white"
+      className="section-padding bg-gray-50"
       ref={sectionRef}
     >
       <div className="container mx-auto px-4">
