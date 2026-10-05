@@ -41,8 +41,10 @@ const Hero: React.FC = () => {
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
             <a 
-              href="#contact" 
+              href="#contact"
               className="btn-primary text-lg"
+              data-umami-event="cta-click"
+              data-umami-event-place="hero"
             >
               Zarezerwuj teraz
             </a>

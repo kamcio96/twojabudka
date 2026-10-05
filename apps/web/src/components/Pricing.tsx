@@ -86,6 +86,8 @@ const Pricing: React.FC = () => {
 
                     <a
                         href="#contact"
+                        data-umami-event="cta-click"
+                        data-umami-event-place={`pakiet-${pkg.name}`}
                         className={`block text-center py-3 px-6 rounded-lg transition-all duration-300 font-medium mt-auto ${
                             pkg.isPopular
                                 ? 'bg-navy-900 text-white hover:bg-navy-800'

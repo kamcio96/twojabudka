@@ -8,6 +8,11 @@ COPY apps/web/package.json apps/web/
 RUN npm ci --no-audit --no-fund
 COPY packages/shared packages/shared
 COPY apps/web apps/web
+# Umami: wartości wkompilowane w bundle (puste = analityka wyłączona).
+ARG VITE_UMAMI_URL=""
+ARG VITE_UMAMI_WEBSITE_ID=""
+ARG VITE_UMAMI_DOMAINS=""
+ENV VITE_UMAMI_URL=$VITE_UMAMI_URL VITE_UMAMI_WEBSITE_ID=$VITE_UMAMI_WEBSITE_ID VITE_UMAMI_DOMAINS=$VITE_UMAMI_DOMAINS
 RUN npm run build --workspace=@twojabudka/web
 
 FROM nginx:1.27-alpine

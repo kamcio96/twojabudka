@@ -6,6 +6,12 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        # Umami: adres instancji i ID strony (osobne dla beta i produkcji); puste = wyłączone.
+        VITE_UMAMI_URL: ${UMAMI_URL:-}
+        VITE_UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
+        # Opcjonalnie: liczyć tylko na tych domenach (po przecinku).
+        VITE_UMAMI_DOMAINS: ${UMAMI_DOMAINS:-}
     expose:
       - "80"
     depends_on:

@@ -50,6 +50,8 @@ const Footer: React.FC = () => {
                 <p>
                   <a 
                     href={`mailto:${business.email}`}
+                    data-umami-event="mail-click"
+                    data-umami-event-place="footer"
                     className="hover:text-gold-500 transition-colors duration-300"
                   >
                     {business.email}
@@ -58,6 +60,8 @@ const Footer: React.FC = () => {
                 <p>
                   <a 
                     href={business.phoneHref}
+                    data-umami-event="tel-click"
+                    data-umami-event-place="footer"
                     className="hover:text-gold-500 transition-colors duration-300"
                   >
                     {business.phone}

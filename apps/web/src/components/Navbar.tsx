@@ -59,6 +59,8 @@ const Navbar: React.FC = () => {
             <a
               href="#contact"
               className="btn-primary"
+              data-umami-event="cta-click"
+              data-umami-event-place="navbar"
             >
               Zarezerwuj
             </a>
@@ -107,6 +109,8 @@ const Navbar: React.FC = () => {
               <a
                 href="#contact"
                 className="btn-primary text-center"
+                data-umami-event="cta-click"
+                data-umami-event-place="navbar-mobile"
                 onClick={toggleMobileMenu}
               >
                 Zarezerwuj teraz

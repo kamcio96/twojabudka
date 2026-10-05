@@ -4,6 +4,7 @@ import { contactSchema, CONTACT_LIMITS, type ContactField, type ContactFieldErro
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import { business } from '../content/business';
 import { sendContact } from '../lib/api';
+import { track } from '../lib/analytics';
 
 interface FormData {
   name: string;
@@ -94,6 +95,7 @@ const ContactForm: React.FC = () => {
       });
 
       if (body.ok) {
+        track('contact-submit', { eventType: formData.eventType || 'brak' });
         setSubmitted(true);
         setFormData(EMPTY_FORM);
         startedAt.current = Date.now();
@@ -145,7 +147,7 @@ const ContactForm: React.FC = () => {
                     <Phone className="mr-4 text-gold-500" size={20} />
                     <div>
                       <h3 className="text-lg font-semibold">Telefon</h3>
-                      <a href={business.phoneHref} className="opacity-90 hover:text-gold-500 transition-colors duration-300">
+                      <a href={business.phoneHref} data-umami-event="tel-click" data-umami-event-place="contact" className="opacity-90 hover:text-gold-500 transition-colors duration-300">
                         {business.phone}
                       </a>
                     </div>
@@ -155,7 +157,7 @@ const ContactForm: React.FC = () => {
                     <Mail className="mr-4 text-gold-500" size={20} />
                     <div>
                       <h3 className="text-lg font-semibold">Email</h3>
-                      <a href={`mailto:${business.email}`} className="opacity-90 hover:text-gold-500 transition-colors duration-300">
+                      <a href={`mailto:${business.email}`} data-umami-event="mail-click" data-umami-event-place="contact" className="opacity-90 hover:text-gold-500 transition-colors duration-300">
                         {business.email}
                       </a>
                     </div>
