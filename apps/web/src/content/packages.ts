@@ -10,8 +10,6 @@ export interface Package {
 }
 
 // Wszystkie pakiety wymieniają cechy w tej samej kolejności, żeby dało się je porównać wzrokiem.
-// TODO(właściciel): Standard i Exclusive mają „Personalizowane szablony wydruków”, a Premium nie —
-// potwierdzić, czy to zamierzone.
 export const packages: Package[] = [
   {
     name: 'Standard',
@@ -37,6 +35,7 @@ export const packages: Package[] = [
       'Nielimitowana liczba zdjęć',
       'Dwa rodzaje wydruków',
       'Stylowe rekwizyty',
+      'Personalizowane szablony wydruków',
       'Personalizacja zdjęć',
       'Wybór tła',
       'Galeria online',
