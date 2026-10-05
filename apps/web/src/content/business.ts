@@ -5,7 +5,7 @@ export const business = {
   phone: '+48 789 772 289',
   phoneHref: 'tel:+48789772289',
   email: 'kontakt@twojabudka.pl',
-  area: 'od Koszalina do Szczecina',
+  area: 'od Szczecina do Koszalina',
   social: {
     facebook: 'https://www.facebook.com/koszalinfotobudka',
     instagram: 'https://www.instagram.com/twojabudka/',
