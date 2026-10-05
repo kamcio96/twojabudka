@@ -9,6 +9,9 @@ export interface Package {
   features: string[];
 }
 
+// Wszystkie pakiety wymieniają cechy w tej samej kolejności, żeby dało się je porównać wzrokiem.
+// TODO(właściciel): Standard i Exclusive mają „Personalizowane szablony wydruków”, a Premium nie —
+// potwierdzić, czy to zamierzone.
 export const packages: Package[] = [
   {
     name: 'Standard',
@@ -16,11 +19,11 @@ export const packages: Package[] = [
     isPopular: false,
     icon: 'Clock',
     features: [
-      'Nielimitowana liczba zdjęć',
-      'Personalizowane szablony wydruków',
-      'Stylowe rekwizyty',
-      'Dwa rodzaje wydruków',
       'Obsługa asystenta',
+      'Nielimitowana liczba zdjęć',
+      'Dwa rodzaje wydruków',
+      'Stylowe rekwizyty',
+      'Personalizowane szablony wydruków',
       'Dojazd do 40 km',
     ],
   },
@@ -30,8 +33,8 @@ export const packages: Package[] = [
     isPopular: true,
     icon: 'Star',
     features: [
-      'Nielimitowana liczba zdjęć',
       'Obsługa asystenta',
+      'Nielimitowana liczba zdjęć',
       'Dwa rodzaje wydruków',
       'Stylowe rekwizyty',
       'Personalizacja zdjęć',
@@ -46,14 +49,14 @@ export const packages: Package[] = [
     isPopular: false,
     icon: 'Gift',
     features: [
-      'Nielimitowana liczba zdjęć',
       'Obsługa asystenta',
+      'Nielimitowana liczba zdjęć',
       'Dwa rodzaje wydruków',
       'Stylowe rekwizyty',
+      'Personalizowane szablony wydruków',
       'Personalizacja zdjęć',
       'Wybór tła',
       'Galeria online',
-      'Personalizowane szablony wydruków',
       'Dojazd do 100 km',
     ],
   },

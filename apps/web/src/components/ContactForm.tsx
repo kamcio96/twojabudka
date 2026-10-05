@@ -130,7 +130,7 @@ const ContactForm: React.FC = () => {
       ></div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-card-hover overflow-hidden">
           <div className="grid md:grid-cols-2">
             {/* Contact Info Section */}
             <div className="bg-gradient-navy text-white p-8 md:p-12 flex flex-col justify-between">
@@ -144,20 +144,20 @@ const ContactForm: React.FC = () => {
 
                 <div className="space-y-6">
                   <div className="flex items-start">
-                    <Phone className="mr-4 text-gold-500" size={20} />
+                    <Phone className="mr-4 mt-1 text-gold-500" size={20} aria-hidden="true" />
                     <div>
                       <h3 className="text-lg font-semibold">Telefon</h3>
-                      <a href={business.phoneHref} data-umami-event="tel-click" data-umami-event-place="contact" className="opacity-90 hover:text-gold-500 transition-colors duration-300">
+                      <a href={business.phoneHref} data-umami-event="tel-click" data-umami-event-place="contact" className="focus-ring rounded text-lg opacity-90 hover:text-gold-500 transition-colors duration-300">
                         {business.phone}
                       </a>
                     </div>
                   </div>
 
                   <div className="flex items-start">
-                    <Mail className="mr-4 text-gold-500" size={20} />
+                    <Mail className="mr-4 mt-1 text-gold-500" size={20} aria-hidden="true" />
                     <div>
-                      <h3 className="text-lg font-semibold">Email</h3>
-                      <a href={`mailto:${business.email}`} data-umami-event="mail-click" data-umami-event-place="contact" className="opacity-90 hover:text-gold-500 transition-colors duration-300">
+                      <h3 className="text-lg font-semibold">E-mail</h3>
+                      <a href={`mailto:${business.email}`} data-umami-event="mail-click" data-umami-event-place="contact" className="focus-ring rounded opacity-90 hover:text-gold-500 transition-colors duration-300">
                         {business.email}
                       </a>
                     </div>
@@ -187,8 +187,8 @@ const ContactForm: React.FC = () => {
 
               {submitted ? (
                 <div className="bg-green-50 border border-green-200 text-green-700 p-4 rounded-lg" role="status">
-                  <h4 className="font-semibold text-lg mb-2">Dziękujemy za wiadomość!</h4>
-                  <p>Odpowiemy najszybciej, jak to możliwe.</p>
+                  <h4 className="font-semibold text-lg mb-2">Dziękujemy za wiadomość.</h4>
+                  <p>Odpowiemy najszybciej, jak to możliwe. W pilnej sprawie zadzwoń: {business.phone}.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} noValidate>
@@ -231,7 +231,7 @@ const ContactForm: React.FC = () => {
 
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                        Email *
+                        E-mail *
                       </label>
                       <input
                         type="email"
@@ -343,7 +343,7 @@ const ContactForm: React.FC = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`w-full flex items-center justify-center py-3 px-6 bg-gold-500 hover:bg-gold-600 text-navy-900 font-medium rounded-lg shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2 transition-all duration-300 ${
+                        className={`w-full flex items-center justify-center py-3 px-6 bg-gold-500 hover:bg-gold-600 text-navy-900 font-semibold rounded-lg shadow-card hover:shadow-card-hover active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2 transition-all duration-300 ease-brand ${
                           isSubmitting ? 'opacity-80 cursor-not-allowed' : ''
                         }`}
                       >
@@ -353,12 +353,12 @@ const ContactForm: React.FC = () => {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Wysyłanie...
+                            Wysyłanie…
                           </span>
                         ) : (
                           <span className="flex items-center">
                             Wyślij wiadomość
-                            <Send className="ml-2" size={18} />
+                            <Send className="ml-2" size={18} aria-hidden="true" />
                           </span>
                         )}
                       </button>

@@ -10,11 +10,12 @@ const Footer: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
               <div className="flex items-center space-x-2 mb-6">
-                <Camera size={32} className="text-gold-500" />
+                <Camera size={32} className="text-gold-500" aria-hidden="true" />
                 <span className="text-2xl font-playfair font-semibold">Twoja Budka</span>
               </div>
               <p className="opacity-80 mb-6">
-                Tworzymy magiczne wspomnienia dla wyjątkowych wydarzeń. Nasza fotobudka zapewni rozrywkę i niezapomniane chwile dla wszystkich gości.
+                Wynajem fotobudki z wydrukami i asystentem na wesela, urodziny, studniówki i imprezy
+                firmowe. Dojeżdżamy {business.area}.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <SocialIcon icon={<Facebook size={20} />} href={business.social.facebook} label="Twoja Budka na Facebooku" />
@@ -23,7 +24,7 @@ const Footer: React.FC = () => {
                   href="https://www.weselezklasa.pl/ogloszenia-weselne/twoja-budka,57901/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:opacity-80 transition-opacity duration-300"
+                  className="focus-ring rounded hover:opacity-80 transition-opacity duration-300"
                 >
                   <img 
                     src="https://www.weselezklasa.pl/banery/Weselezklasa/button230x50bialetlo.png" 
@@ -39,6 +40,7 @@ const Footer: React.FC = () => {
               <ul className="space-y-3">
                 <FooterLink href="#features">Zalety</FooterLink>
                 <FooterLink href="#gallery">Galeria</FooterLink>
+                <FooterLink href="#how-it-works">Jak to działa</FooterLink>
                 <FooterLink href="#pricing">Pakiety</FooterLink>
                 <FooterLink href="#contact">Kontakt</FooterLink>
               </ul>
@@ -52,7 +54,7 @@ const Footer: React.FC = () => {
                     href={`mailto:${business.email}`}
                     data-umami-event="mail-click"
                     data-umami-event-place="footer"
-                    className="hover:text-gold-500 transition-colors duration-300"
+                    className="focus-ring rounded hover:text-gold-500 transition-colors duration-300"
                   >
                     {business.email}
                   </a>
@@ -62,7 +64,7 @@ const Footer: React.FC = () => {
                     href={business.phoneHref}
                     data-umami-event="tel-click"
                     data-umami-event-place="footer"
-                    className="hover:text-gold-500 transition-colors duration-300"
+                    className="focus-ring rounded hover:text-gold-500 transition-colors duration-300"
                   >
                     {business.phone}
                   </a>
@@ -75,7 +77,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-white/10 py-6 text-center opacity-80">
           <p>
             &copy; {new Date().getFullYear()} Twoja Budka. Wszystkie prawa zastrzeżone. 
-            Stworzone z <Heart size={14} className="inline-block text-pink-500 mx-1" /> dla wyjątkowych momentów.
+            Stworzone z <Heart size={14} className="inline-block text-pink-500 mx-1" aria-label="sercem" /> dla wyjątkowych momentów.
           </p>
         </div>
       </div>
@@ -92,7 +94,7 @@ interface SocialIconProps {
 const SocialIcon: React.FC<SocialIconProps> = ({ icon, href, label }) => (
   <a 
     href={href} 
-    className="bg-white/10 hover:bg-gold-500 w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
+    className="focus-ring bg-white/10 hover:bg-gold-500 hover:text-navy-900 w-11 h-11 rounded-full flex items-center justify-center transition-colors duration-300"
     target="_blank"
     rel="noopener noreferrer"
     aria-label={label}
@@ -111,7 +113,7 @@ const FooterLink: React.FC<FooterLinkProps> = ({ href, children, isExternal }) =
   <li>
     <a 
       href={href} 
-      className="opacity-80 hover:opacity-100 hover:text-gold-500 transition-colors duration-300 inline-block"
+      className="focus-ring rounded opacity-80 hover:opacity-100 hover:text-gold-500 transition-colors duration-300 inline-block"
       {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
     >
       {children}

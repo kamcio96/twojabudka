@@ -1,29 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --navy-color: #0A1128;
-  --gold-color: #D4AF37;
-  --pink-color: #FF6B81;
-}
-
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem; /* sekcje nie chowają się pod przyklejoną nawigacją */
 }
 
 body {
   @apply font-montserrat text-navy-900 overflow-x-hidden;
 }
 
-.font-playfair {
-  font-family: 'Playfair Display', serif;
+h1,
+h2,
+h3 {
+  text-wrap: balance;
 }
 
-.text-shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+p {
+  text-wrap: pretty;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
 }
 
 .bg-gradient-navy {
@@ -34,67 +35,57 @@ body {
   background: linear-gradient(135deg, #D4AF37 0%, #FBE287 100%);
 }
 
-.btn-primary {
-  @apply bg-gold-500 hover:bg-gold-600 text-navy-900 font-medium py-3 px-6 rounded-lg transform transition-all duration-300 shadow-lg hover:shadow-xl hover:translate-y-[-2px];
-}
-
-.btn-secondary {
-  @apply border-2 border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-white font-medium py-3 px-6 rounded-lg transform transition-all duration-300;
-}
-
-.section-padding {
-  @apply py-16 md:py-24;
-}
-
-.card {
-  @apply bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300;
-}
-
-/* Ken Burns Effect */
-.ken-burns {
-  animation: ken-burns 20s ease infinite alternate;
-  transform-origin: center;
-}
-
-@keyframes ken-burns {
-  0% {
-    transform: scale(1);
+@layer components {
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2;
   }
-  100% {
-    transform: scale(1.1);
-  }
-}
 
-/* Fade in animation */
-.fade-in {
-  animation: fadeIn 0.8s ease-in-out forwards;
-  opacity: 0;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  .btn-primary {
+    @apply focus-ring inline-flex items-center justify-center bg-gold-500 hover:bg-gold-600 text-navy-900 font-semibold py-3 px-6 rounded-lg shadow-card hover:shadow-card-hover hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 ease-brand;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  /* Drugorzędny na ciemnym tle */
+  .btn-secondary {
+    @apply focus-ring inline-flex items-center justify-center border-2 border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-navy-900 font-semibold py-3 px-6 rounded-lg active:scale-[0.98] transition-all duration-300 ease-brand;
+  }
+
+  /* Ten sam drugorzędny, na jasnym tle (złoty tekst w gold-ink) */
+  .btn-secondary-light {
+    @apply focus-ring inline-flex items-center justify-center border-2 border-gold-ink text-gold-ink hover:bg-gold-500 hover:border-gold-500 hover:text-navy-900 font-semibold py-3 px-6 rounded-lg active:scale-[0.98] transition-all duration-300 ease-brand;
+  }
+
+  .section-padding {
+    @apply pt-16 pb-20 md:pt-24 md:pb-28;
+  }
+
+  .eyebrow {
+    @apply text-sm font-semibold uppercase tracking-[0.18em];
+  }
+
+  /* Wejście elementu przy przewinięciu; .is-visible ustawia rodzic */
+  .reveal {
+    @apply opacity-0 translate-y-8 transition-all duration-700 ease-brand;
+  }
+  .is-visible .reveal {
+    @apply opacity-100 translate-y-0;
   }
 }
 
-/* Staggered animation delay */
-.delay-1 {
-  animation-delay: 0.1s;
-}
-.delay-2 {
-  animation-delay: 0.2s;
-}
-.delay-3 {
-  animation-delay: 0.3s;
-}
-.delay-4 {
-  animation-delay: 0.4s;
-}
-.delay-5 {
-  animation-delay: 0.5s;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .reveal {
+    transform: none !important;
+  }
 }

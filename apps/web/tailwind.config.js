@@ -26,8 +26,13 @@ export default {
         playfair: ['"Playfair Display"', 'serif'],
       },
       boxShadow: {
-        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        // Cienie w odcieniu granatu marki zamiast czarnych
+        card: '0 12px 32px -12px rgba(10, 17, 40, 0.16)',
+        'card-hover': '0 24px 48px -16px rgba(10, 17, 40, 0.24)',
+        print: '0 18px 40px -12px rgba(0, 0, 0, 0.45)',
+      },
+      transitionTimingFunction: {
+        brand: 'cubic-bezier(0.22, 1, 0.36, 1)',
       },
     },
   },

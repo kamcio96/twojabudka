@@ -1,118 +1,75 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Expand } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
+import { business } from '../content/business';
 
+// TODO: więcej zdjęć z realizacji (10–15, różne okazje) — patrz docs/TODO.md
 const galleryImages = [
   {
-    src: "/images/1.webp",
-    alt: "Zdjęcie z fotobudki 1",
+    src: '/images/1.webp',
+    alt: 'Goście wesela w maskach, kapeluszach i okularach pozują z rekwizytami',
+    // Układ mozaiki: duże zdjęcie na początku
+    tile: 'col-span-2 lg:row-span-2',
   },
   {
-    src: "/images/2.webp",
-    alt: "Zdjęcie z fotobudki 2",
+    src: '/images/4.webp',
+    alt: 'Stolik z kwiatami, ulotkami i tabliczką Twoja Budka przy fotobudce',
+    tile: 'row-span-2',
   },
   {
-    src: "/images/3.webp",
-    alt: "Zdjęcie z fotobudki 3",
+    src: '/images/2.webp',
+    alt: 'Para młoda całuje się w fotobudce, w rękach tabliczki „Gorzko, gorzko!”',
+    tile: '',
   },
   {
-    src: "/images/4.webp",
-    alt: "Zdjęcie z fotobudki 4",
+    src: '/images/3.webp',
+    alt: 'Starsza para w kapeluszach i okularach-serduszkach pozuje w fotobudce',
+    tile: '',
   },
   {
-    src: "/images/5.webp",
-    alt: "Zdjęcie z fotobudki 5",
-  }
+    src: '/images/5.webp',
+    alt: 'Roześmiani znajomi w okularach-serduszkach na osiemnastce',
+    tile: 'col-span-2 lg:col-span-1',
+  },
 ];
 
-// Keep in sync with the duration-500 class on the slide track
-const SLIDE_DURATION_MS = 500;
-
-// Matches the Tailwind breakpoints used for slide widths: w-full / sm:w-1/2 / md:w-1/3
-const getSlidesPerView = () => {
-  if (window.matchMedia('(min-width: 768px)').matches) return 3;
-  if (window.matchMedia('(min-width: 640px)').matches) return 2;
-  return 1;
-};
-
 const Gallery: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [animate, setAnimate] = useState(true);
-  const [slidesPerView, setSlidesPerView] = useState(getSlidesPerView);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
-  const isTransitioning = useRef(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const openerRef = useRef<HTMLButtonElement | null>(null);
 
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const isVisible = useScrollAnimation(sectionRef, 0.1);
 
-  useEffect(() => {
-    const handleResize = () => setSlidesPerView(getSlidesPerView());
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const lightboxOpen = lightboxIndex !== null;
 
-  const slide = useCallback((direction: 1 | -1) => {
-    if (isTransitioning.current) return;
-    isTransitioning.current = true;
-    setAnimate(true);
-    setCurrentIndex(prev => prev + direction);
-    setTimeout(() => {
-      isTransitioning.current = false;
-    }, SLIDE_DURATION_MS);
-  }, []);
-
-  // Past either end of the real images: once the slide finishes, jump without animation
-  // to the equivalent position in the middle copy
-  useEffect(() => {
-    if (currentIndex >= 0 && currentIndex < galleryImages.length) return;
-    const timer = setTimeout(() => {
-      setAnimate(false);
-      setCurrentIndex((currentIndex + galleryImages.length) % galleryImages.length);
-    }, SLIDE_DURATION_MS);
-    return () => clearTimeout(timer);
-  }, [currentIndex]);
-
-  // Autoplay; restarts after every slide change, so manual navigation resets the timer
-  useEffect(() => {
-    if (lightboxOpen) return;
-    const timer = setTimeout(() => slide(1), 5000);
-    return () => clearTimeout(timer);
-  }, [currentIndex, lightboxOpen, slide]);
-
-  // Re-enable the transition one frame after an instant jump
-  useEffect(() => {
-    if (animate) return;
-    const frame = requestAnimationFrame(() => setAnimate(true));
-    return () => cancelAnimationFrame(frame);
-  }, [animate]);
-
-  const openLightbox = (index: number) => {
+  const openLightbox = (index: number, opener: HTMLButtonElement) => {
+    openerRef.current = opener;
     setLightboxIndex(index);
-    setLightboxOpen(true);
   };
 
-  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
-
-  const nextLightboxImage = useCallback(() => {
-    setLightboxIndex((prevIndex) => 
-      (prevIndex + 1) % galleryImages.length
-    );
+  const closeLightbox = useCallback(() => {
+    setLightboxIndex(null);
+    openerRef.current?.focus();
   }, []);
 
-  const prevLightboxImage = useCallback(() => {
-    setLightboxIndex((prevIndex) => 
-      (prevIndex - 1 + galleryImages.length) % galleryImages.length
-    );
+  const showNext = useCallback(() => {
+    setLightboxIndex(i => (i === null ? i : (i + 1) % galleryImages.length));
+  }, []);
+
+  const showPrev = useCallback(() => {
+    setLightboxIndex(i => (i === null ? i : (i - 1 + galleryImages.length) % galleryImages.length));
   }, []);
 
   useEffect(() => {
     if (!lightboxOpen) return;
 
+    closeButtonRef.current?.focus();
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowRight') nextLightboxImage();
-      if (e.key === 'ArrowLeft') prevLightboxImage();
+      if (e.key === 'ArrowRight') showNext();
+      if (e.key === 'ArrowLeft') showPrev();
     };
 
     document.body.style.overflow = 'hidden';
@@ -121,112 +78,117 @@ const Gallery: React.FC = () => {
       document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [lightboxOpen, closeLightbox, nextLightboxImage, prevLightboxImage]);
-
-  // Create a circular array of images for infinite scrolling
-  const displayImages = [...galleryImages, ...galleryImages, ...galleryImages];
-  const offset = galleryImages.length;
+  }, [lightboxOpen, closeLightbox, showNext, showPrev]);
 
   return (
-    <section id="gallery" className="section-padding bg-white" ref={sectionRef}>
+    <section
+      id="gallery"
+      className={`section-padding bg-gray-50 ${isVisible ? 'is-visible' : ''}`}
+      ref={sectionRef}
+    >
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className={`text-3xl md:text-4xl font-bold font-playfair mb-4 transition-all duration-700 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}>
-            Galeria <span className="text-gold-500">Wspomnień</span>
-          </h2>
-          <p className={`text-lg max-w-2xl mx-auto text-gray-600 transition-all duration-700 delay-1 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}>
-            Zobacz jak nasi klienci bawią się przy naszej fotobudce
-          </p>
-        </div>
-
-        <div className={`relative ${isVisible ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000`}>
-          <div className="relative overflow-hidden">
-            <div 
-              className={`flex ${animate ? 'transition-transform duration-500 ease-in-out' : ''}`}
-              style={{ 
-                transform: `translateX(-${(currentIndex + offset) * (100 / slidesPerView)}%)`,
-              }}
-            >
-              {displayImages.map((image, index) => (
-                <div 
-                  key={index} 
-                  className="w-full sm:w-1/2 md:w-1/3 flex-shrink-0 p-2"
-                  onClick={() => openLightbox(index % galleryImages.length)}
-                >
-                  <div className="relative overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 h-64 md:h-80">
-                    <img 
-                      src={image.src} 
-                      alt={image.alt}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700 ease-in-out" 
-                    />
-                    <div className="absolute inset-0 bg-navy-900 bg-opacity-30 hover:bg-opacity-10 transition-all duration-300"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+          <div>
+            <h2 className="reveal text-3xl md:text-4xl font-bold font-playfair tracking-tight mb-4">
+              Galeria <span className="text-gold-ink">wspomnień</span>
+            </h2>
+            <p className="reveal text-lg text-gray-600 max-w-xl" style={{ transitionDelay: '0.1s' }}>
+              Tak bawią się goście przy naszej fotobudce: na weselach, osiemnastkach
+              i imprezach rodzinnych.
+            </p>
           </div>
-
-          <button 
-            className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-navy-900 p-2 rounded-full shadow-md hover:bg-gold-500 hover:text-white transition-colors duration-300"
-            onClick={() => slide(-1)}
-            aria-label="Previous slide"
+          <a
+            href={business.social.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="reveal btn-secondary-light self-start md:self-auto"
+            style={{ transitionDelay: '0.2s' }}
           >
-            <ChevronLeft size={24} />
-          </button>
-          <button 
-            className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-navy-900 p-2 rounded-full shadow-md hover:bg-gold-500 hover:text-white transition-colors duration-300"
-            onClick={() => slide(1)}
-            aria-label="Next slide"
-          >
-            <ChevronRight size={24} />
-          </button>
+            Więcej na Instagramie
+          </a>
         </div>
+
+        <ul className="grid grid-cols-2 lg:grid-cols-3 auto-rows-[160px] sm:auto-rows-[220px] lg:auto-rows-[230px] gap-3 md:gap-4">
+          {galleryImages.map((image, index) => (
+            <li
+              key={image.src}
+              className={`reveal ${image.tile}`}
+              style={{ transitionDelay: `${0.1 + index * 0.08}s` }}
+            >
+              <button
+                type="button"
+                onClick={e => openLightbox(index, e.currentTarget)}
+                className="focus-ring group relative block w-full h-full overflow-hidden rounded-xl shadow-card"
+                aria-label={`Powiększ zdjęcie: ${image.alt}`}
+              >
+                <img
+                  src={image.src}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-brand group-hover:scale-105"
+                />
+                <span
+                  className="absolute right-3 bottom-3 w-9 h-9 rounded-full bg-white/90 text-navy-900 flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300"
+                  aria-hidden="true"
+                >
+                  <Expand size={16} />
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Lightbox */}
       {lightboxOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex justify-center items-center">
-          <button 
-            className="absolute top-4 right-4 text-white hover:text-gold-500 transition-colors duration-300"
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Galeria zdjęć"
+          className="fixed inset-0 z-[60] bg-navy-900/95 flex justify-center items-center"
+          onClick={e => {
+            if (e.target === e.currentTarget) closeLightbox();
+          }}
+        >
+          <button
+            ref={closeButtonRef}
+            type="button"
+            className="focus-ring absolute top-4 right-4 p-2 rounded-full text-white hover:text-gold-500 transition-colors duration-300"
             onClick={closeLightbox}
-            aria-label="Close lightbox"
+            aria-label="Zamknij galerię"
           >
             <X size={32} />
           </button>
-          
-          <button 
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gold-500 transition-colors duration-300"
-            onClick={prevLightboxImage}
-            aria-label="Previous image"
+
+          <button
+            type="button"
+            className="focus-ring absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 rounded-full text-white hover:text-gold-500 transition-colors duration-300"
+            onClick={showPrev}
+            aria-label="Poprzednie zdjęcie"
           >
             <ChevronLeft size={40} />
           </button>
-          
-          <div className="max-w-4xl max-h-[80vh] w-full h-full flex justify-center items-center">
-            <img 
-              src={galleryImages[lightboxIndex].src} 
+
+          <figure className="max-w-5xl w-full px-14 flex flex-col items-center">
+            <img
+              src={galleryImages[lightboxIndex].src}
               alt={galleryImages[lightboxIndex].alt}
-              className="max-w-full max-h-full object-contain"
+              className="max-w-full max-h-[80vh] object-contain rounded-lg"
             />
-          </div>
-          
-          <button 
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gold-500 transition-colors duration-300"
-            onClick={nextLightboxImage}
-            aria-label="Next image"
+            <figcaption className="mt-4 text-white/80 text-sm text-center">
+              {lightboxIndex + 1} / {galleryImages.length} · {galleryImages[lightboxIndex].alt}
+            </figcaption>
+          </figure>
+
+          <button
+            type="button"
+            className="focus-ring absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 rounded-full text-white hover:text-gold-500 transition-colors duration-300"
+            onClick={showNext}
+            aria-label="Następne zdjęcie"
           >
             <ChevronRight size={40} />
           </button>
-          
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white">
-            {lightboxIndex + 1} / {galleryImages.length}
-          </div>
         </div>
       )}
     </section>
