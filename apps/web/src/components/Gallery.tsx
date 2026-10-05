@@ -87,7 +87,7 @@ const Gallery: React.FC = () => {
       ref={sectionRef}
     >
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-12">
           <div>
             <h2 className="reveal text-3xl md:text-4xl font-bold font-playfair tracking-tight mb-4">
               Galeria <span className="text-gold-ink">wspomnień</span>
@@ -101,7 +101,7 @@ const Gallery: React.FC = () => {
             href={business.social.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="reveal btn-secondary-light self-start md:self-auto"
+            className="reveal btn-secondary-light hidden md:inline-flex"
             style={{ transitionDelay: '0.2s' }}
           >
             Więcej na Instagramie
@@ -138,6 +138,15 @@ const Gallery: React.FC = () => {
             </li>
           ))}
         </ul>
+
+        <a
+          href={business.social.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-secondary-light w-full mt-8 md:hidden"
+        >
+          Więcej na Instagramie
+        </a>
       </div>
 
       {/* Lightbox */}

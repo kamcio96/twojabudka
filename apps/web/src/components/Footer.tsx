@@ -7,8 +7,8 @@ const Footer: React.FC = () => {
     <footer className="bg-gradient-navy text-white">
       <div className="container mx-auto px-4">
         <div className="py-12 md:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-10">
+            <div className="sm:col-span-2 md:col-span-1">
               <div className="flex items-center space-x-2 mb-6">
                 <Camera size={32} className="text-gold-500" aria-hidden="true" />
                 <span className="text-2xl font-playfair font-semibold">Twoja Budka</span>
@@ -36,8 +36,8 @@ const Footer: React.FC = () => {
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-6">Szybkie linki</h3>
-              <ul className="space-y-3">
+              <h3 className="eyebrow text-gold-500 mb-5">Na stronie</h3>
+              <ul className="flex flex-wrap gap-x-6 gap-y-3 sm:block sm:space-y-3">
                 <FooterLink href="#features">Zalety</FooterLink>
                 <FooterLink href="#gallery">Galeria</FooterLink>
                 <FooterLink href="#how-it-works">Jak to działa</FooterLink>
@@ -47,8 +47,8 @@ const Footer: React.FC = () => {
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-6">Kontakt</h3>
-              <div className="space-y-4 opacity-80">
+              <h3 className="eyebrow text-gold-500 mb-5">Kontakt</h3>
+              <div className="space-y-3 sm:space-y-4 opacity-80">
                 <p>
                   <a 
                     href={`mailto:${business.email}`}

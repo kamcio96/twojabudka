@@ -47,8 +47,19 @@ const Features: React.FC = () => {
       ref={sectionRef}
     >
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          <figure className="reveal lg:col-span-5 lg:sticky lg:top-28">
+        {/* Mobile: nagłówek → zdjęcie → lista; desktop: zdjęcie po lewej (sticky), reszta po prawej */}
+        <div className="grid lg:grid-cols-12 gap-x-16 gap-y-10 lg:gap-y-0">
+          <div className="lg:col-start-6 lg:col-span-7">
+            <h2 className="reveal text-3xl md:text-4xl font-bold font-playfair tracking-tight mb-4">
+              Dlaczego <span className="text-gold-ink">Twoja Budka</span>?
+            </h2>
+            <p className="reveal text-lg text-gray-600 max-w-2xl lg:mb-12" style={{ transitionDelay: '0.1s' }}>
+              Zajmujemy się wszystkim, co dzieje się przy fotobudce. Ty i Twoi goście po prostu
+              się bawicie.
+            </p>
+          </div>
+
+          <figure className="reveal lg:col-start-1 lg:col-span-5 lg:row-start-1 lg:row-span-2 lg:self-start lg:sticky lg:top-28">
             <img
               src="/images/3.webp"
               alt="Starsza para w kapeluszach i okularach-serduszkach pozuje w fotobudce"
@@ -63,29 +74,25 @@ const Features: React.FC = () => {
             </figcaption>
           </figure>
 
-          <div className="lg:col-span-7">
-            <h2 className="reveal text-3xl md:text-4xl font-bold font-playfair tracking-tight mb-4">
-              Dlaczego <span className="text-gold-ink">Twoja Budka</span>?
-            </h2>
-            <p className="reveal text-lg text-gray-600 max-w-2xl mb-12" style={{ transitionDelay: '0.1s' }}>
-              Zajmujemy się wszystkim, co dzieje się przy fotobudce. Ty i Twoi goście po prostu
-              się bawicie.
-            </p>
-
-            <ul className="grid sm:grid-cols-2 gap-x-10">
-              {features.map(({ icon: Icon, title, description }, index) => (
-                <li
-                  key={title}
-                  className="reveal border-t border-gray-200 py-7"
-                  style={{ transitionDelay: `${0.15 + index * 0.08}s` }}
-                >
-                  <Icon className="text-gold-ink mb-4" size={32} strokeWidth={1.75} aria-hidden="true" />
-                  <h3 className="text-xl font-semibold mb-2">{title}</h3>
+          <ul className="lg:col-start-6 lg:col-span-7 grid sm:grid-cols-2 gap-x-10">
+            {features.map(({ icon: Icon, title, description }, index) => (
+              <li
+                key={title}
+                className="reveal border-t border-gray-200 py-5 sm:py-7 flex gap-4 sm:block"
+                style={{ transitionDelay: `${0.15 + index * 0.08}s` }}
+              >
+                <Icon
+                  className="text-gold-ink flex-shrink-0 mt-0.5 sm:mt-0 sm:mb-4 w-7 h-7 sm:w-8 sm:h-8"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <div>
+                  <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">{title}</h3>
                   <p className="text-gray-600">{description}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

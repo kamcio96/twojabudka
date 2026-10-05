@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mail, Phone, Send } from 'lucide-react';
+import { Mail, MapPin, Phone, Send } from 'lucide-react';
 import { contactSchema, CONTACT_LIMITS, type ContactField, type ContactFieldErrors } from '@twojabudka/shared';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import { business } from '../content/business';
@@ -120,65 +120,66 @@ const ContactForm: React.FC = () => {
   return (
     <section
       id="contact"
-      className="section-padding bg-white relative overflow-hidden"
+      className="section-padding bg-white"
       ref={sectionRef}
     >
-      {/* Background Element */}
-      <div
-        className="absolute top-0 right-0 w-1/2 h-full bg-gray-50 transform skew-x-12 translate-x-1/4 z-0 hidden lg:block"
-        aria-hidden="true"
-      ></div>
-
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-card-hover overflow-hidden">
-          <div className="grid md:grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Contact Info Section */}
-            <div className="bg-gradient-navy text-white p-8 md:p-12 flex flex-col justify-between">
-              <div>
-                <h2 className="text-3xl font-bold font-playfair mb-6">
-                  Skontaktuj się z nami
-                </h2>
-                <p className="mb-10 opacity-90">
-                  Chętnie odpowiemy na wszystkie pytania i pomożemy zaplanować idealną oprawę fotograficzną Twojego wydarzenia.
-                </p>
+            <div className="bg-gradient-navy text-white p-6 sm:p-8 md:p-12 flex flex-col">
+              <h2 className="text-3xl md:text-4xl font-bold font-playfair tracking-tight mb-4">
+                Poproś o <span className="text-gold-500">wycenę</span>
+              </h2>
+              <p className="mb-10 text-white/85">
+                Chętnie odpowiemy na wszystkie pytania i pomożemy zaplanować oprawę fotograficzną
+                Twojego wydarzenia.
+              </p>
 
-                <div className="space-y-6">
-                  <div className="flex items-start">
-                    <Phone className="mr-4 mt-1 text-gold-500" size={20} aria-hidden="true" />
-                    <div>
-                      <h3 className="text-lg font-semibold">Telefon</h3>
-                      <a href={business.phoneHref} data-umami-event="tel-click" data-umami-event-place="contact" className="focus-ring rounded text-lg opacity-90 hover:text-gold-500 transition-colors duration-300">
-                        {business.phone}
-                      </a>
-                    </div>
+              <ul className="space-y-6">
+                <li className="flex items-start gap-4">
+                  <Phone className="mt-1 text-gold-500 flex-shrink-0" size={22} aria-hidden="true" />
+                  <div>
+                    <h3 className="text-sm font-medium text-white/70">Telefon</h3>
+                    <a href={business.phoneHref} data-umami-event="tel-click" data-umami-event-place="contact" className="focus-ring rounded text-xl md:text-2xl font-semibold hover:text-gold-500 transition-colors duration-300">
+                      {business.phone}
+                    </a>
                   </div>
+                </li>
 
-                  <div className="flex items-start">
-                    <Mail className="mr-4 mt-1 text-gold-500" size={20} aria-hidden="true" />
-                    <div>
-                      <h3 className="text-lg font-semibold">E-mail</h3>
-                      <a href={`mailto:${business.email}`} data-umami-event="mail-click" data-umami-event-place="contact" className="focus-ring rounded opacity-90 hover:text-gold-500 transition-colors duration-300">
-                        {business.email}
-                      </a>
-                    </div>
+                <li className="flex items-start gap-4">
+                  <Mail className="mt-1 text-gold-500 flex-shrink-0" size={22} aria-hidden="true" />
+                  <div>
+                    <h3 className="text-sm font-medium text-white/70">E-mail</h3>
+                    <a href={`mailto:${business.email}`} data-umami-event="mail-click" data-umami-event-place="contact" className="focus-ring rounded text-base sm:text-lg break-words hover:text-gold-500 transition-colors duration-300">
+                      {business.email}
+                    </a>
                   </div>
-                </div>
-              </div>
+                </li>
 
-              <div className="mt-12">
-                <h3 className="text-lg font-semibold mb-4">Obsługujemy:</h3>
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Wesela</span>
-                  <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Urodziny</span>
-                  <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Imprezy firmowe</span>
-                  <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Studniówki</span>
-                  <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Eventy</span>
-                </div>
+                <li className="flex items-start gap-4">
+                  <MapPin className="mt-1 text-gold-500 flex-shrink-0" size={22} aria-hidden="true" />
+                  <div>
+                    <h3 className="text-sm font-medium text-white/70">Dojazd</h3>
+                    <p className="text-lg">Dojeżdżamy {business.area}</p>
+                  </div>
+                </li>
+              </ul>
+
+              <div className="mt-12 md:mt-auto md:pt-12">
+                <h3 className="text-sm font-medium text-white/70 mb-3">Obsługujemy</h3>
+                <ul className="flex flex-wrap gap-2">
+                  {EVENT_TYPES.filter(type => type !== 'Inna okazja').map(type => (
+                    <li key={type} className="px-3 py-1 border border-white/15 bg-white/5 rounded-full text-sm">
+                      {type}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
 
             {/* Form Section */}
-            <div className={`p-8 md:p-12 transition-opacity duration-1000 ${
+            <div className={`p-6 sm:p-8 md:p-12 transition-opacity duration-1000 ${
               isVisible ? 'opacity-100' : 'opacity-0'
             }`}>
               <h3 className="text-2xl font-bold font-playfair text-navy-900 mb-6">
@@ -221,7 +222,7 @@ const ContactForm: React.FC = () => {
                         onChange={handleChange}
                         aria-invalid={!!errors.name}
                         aria-describedby={errors.name ? 'name-error' : undefined}
-                        className={inputClass(!!errors.name)}
+                        className={`${inputClass(!!errors.name)} h-12`}
                         placeholder="Jan Kowalski"
                       />
                       {errors.name && (
@@ -243,7 +244,7 @@ const ContactForm: React.FC = () => {
                         onChange={handleChange}
                         aria-invalid={!!errors.email}
                         aria-describedby={errors.email ? 'email-error' : undefined}
-                        className={inputClass(!!errors.email)}
+                        className={`${inputClass(!!errors.email)} h-12`}
                         placeholder="jan@example.com"
                       />
                       {errors.email && (
@@ -265,7 +266,7 @@ const ContactForm: React.FC = () => {
                         onChange={handleChange}
                         aria-invalid={!!errors.phone}
                         aria-describedby={errors.phone ? 'phone-error' : undefined}
-                        className={inputClass(!!errors.phone)}
+                        className={`${inputClass(!!errors.phone)} h-12`}
                         placeholder="+48 123 456 789"
                       />
                       {errors.phone && (
@@ -283,7 +284,7 @@ const ContactForm: React.FC = () => {
                           name="eventType"
                           value={formData.eventType}
                           onChange={handleChange}
-                          className={`${inputClass(!!errors.eventType)} bg-white`}
+                          className={`${inputClass(!!errors.eventType)} h-12 bg-white`}
                         >
                           <option value="">Wybierz</option>
                           {EVENT_TYPES.map(type => (
@@ -304,7 +305,7 @@ const ContactForm: React.FC = () => {
                           onChange={handleChange}
                           aria-invalid={!!errors.eventDate}
                           aria-describedby={errors.eventDate ? 'eventDate-error' : undefined}
-                          className={inputClass(!!errors.eventDate)}
+                          className={`${inputClass(!!errors.eventDate)} h-12`}
                         />
                         {errors.eventDate && (
                           <p id="eventDate-error" className="mt-1 text-red-600 text-sm">{errors.eventDate}</p>
