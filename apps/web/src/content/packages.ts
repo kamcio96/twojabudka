@@ -60,3 +60,14 @@ export const packages: Package[] = [
     ],
   },
 ];
+
+// Od czego zależy cena. Ceny nie publikujemy. `of` — dopełniacz do zdania „Cena zależy od …”.
+export const priceFactors = [
+  { name: 'Czas trwania pakietu', of: 'czasu trwania pakietu' },
+  { name: 'Termin', of: 'terminu' },
+  { name: 'Odległość dojazdu', of: 'odległości dojazdu' },
+  { name: 'Wybrane dodatki', of: 'wybranych dodatków' },
+];
+
+// „a, b, c i d”
+export const listPl = (items: readonly string[]) => items.join(', ').replace(/, ([^,]*)$/, ' i $1');

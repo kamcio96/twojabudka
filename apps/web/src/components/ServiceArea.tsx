@@ -2,8 +2,12 @@ import React, { useRef } from 'react';
 import { MapPin } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import { business } from '../content/business';
+import { pagesOfKind } from '../content/pages';
 
 const [mainCity, ...otherCities] = business.cities;
+
+// Miasta z własną podstroną (/fotobudka-{miasto}) są linkami — linkowanie wewnętrzne.
+const cityPaths = new Map(pagesOfKind('city').map(p => [p.service?.city, p.path]));
 
 const ServiceArea: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -49,14 +53,25 @@ const ServiceArea: React.FC = () => {
               style={{ transitionDelay: '0.25s' }}
               aria-label="Obsługiwane miasta"
             >
-              {otherCities.map(city => (
-                <li
-                  key={city}
-                  className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm text-navy-900"
-                >
-                  {city}
-                </li>
-              ))}
+              {otherCities.map(city => {
+                const path = cityPaths.get(city);
+                return (
+                  <li key={city}>
+                    {path ? (
+                      <a
+                        href={path}
+                        className="focus-ring block px-3 py-1.5 bg-white border border-gold-700 rounded-full text-sm font-medium text-gold-ink transition-colors duration-300 ease-brand hover:bg-gold-500 hover:text-navy-900"
+                      >
+                        Fotobudka {city}
+                      </a>
+                    ) : (
+                      <span className="block px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm text-navy-900">
+                        {city}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

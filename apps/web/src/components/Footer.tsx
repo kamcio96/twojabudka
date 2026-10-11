@@ -1,14 +1,33 @@
 import React from 'react';
 import { Camera, Facebook, Instagram, Heart } from 'lucide-react';
 import { business } from '../content/business';
+import { pages } from '../content/pages';
+import { sectionHref } from '../lib/nav';
 
-const Footer: React.FC = () => {
+const SECTIONS = [
+  { id: 'features', label: 'Zalety' },
+  { id: 'gallery', label: 'Galeria' },
+  { id: 'how-it-works', label: 'Jak to działa' },
+  { id: 'pricing', label: 'Pakiety' },
+  { id: 'reviews', label: 'Opinie' },
+  { id: 'faq', label: 'Częste pytania' },
+  { id: 'contact', label: 'Kontakt' },
+];
+
+// Podstrony ofertowe (okazje, pakiety, poradniki) — linkowanie wewnętrzne; miasta linkuje „Gdzie dojeżdżamy”.
+const OFFER_PAGES = pages.filter(p => p.kind === 'occasion' || p.kind === 'info' || p.kind === 'guide');
+
+interface FooterProps {
+  isHome: boolean;
+}
+
+const Footer: React.FC<FooterProps> = ({ isHome }) => {
   return (
     <footer className="bg-gradient-navy text-white">
       <div className="container mx-auto px-4">
         <div className="py-12 md:py-16">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-10">
-            <div className="sm:col-span-2 md:col-span-1">
+          <div className={`grid grid-cols-1 sm:grid-cols-2 ${OFFER_PAGES.length > 0 ? 'lg:grid-cols-4' : 'md:grid-cols-3'} gap-x-6 gap-y-10`}>
+            <div className={`sm:col-span-2 ${OFFER_PAGES.length > 0 ? 'lg:col-span-1' : 'md:col-span-1'}`}>
               <div className="flex items-center space-x-2 mb-6">
                 <Camera size={32} className="text-gold-500" aria-hidden="true" />
                 <span className="text-2xl font-playfair font-semibold">Twoja Budka</span>
@@ -38,16 +57,23 @@ const Footer: React.FC = () => {
               </div>
             </div>
             
+            {OFFER_PAGES.length > 0 && (
+              <div>
+                <h3 className="eyebrow text-gold-500 mb-5">Oferta</h3>
+                <ul className="flex flex-wrap gap-x-6 gap-y-3 sm:block sm:space-y-3">
+                  {OFFER_PAGES.map(p => (
+                    <FooterLink key={p.path} href={p.path}>{p.label}</FooterLink>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div>
               <h3 className="eyebrow text-gold-500 mb-5">Na stronie</h3>
               <ul className="flex flex-wrap gap-x-6 gap-y-3 sm:block sm:space-y-3">
-                <FooterLink href="#features">Zalety</FooterLink>
-                <FooterLink href="#gallery">Galeria</FooterLink>
-                <FooterLink href="#how-it-works">Jak to działa</FooterLink>
-                <FooterLink href="#pricing">Pakiety</FooterLink>
-                <FooterLink href="#reviews">Opinie</FooterLink>
-                <FooterLink href="#faq">Częste pytania</FooterLink>
-                <FooterLink href="#contact">Kontakt</FooterLink>
+                {SECTIONS.map(section => (
+                  <FooterLink key={section.id} href={sectionHref(section.id, isHome)}>{section.label}</FooterLink>
+                ))}
               </ul>
             </div>
             

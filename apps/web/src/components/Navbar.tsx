@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Camera } from 'lucide-react';
+import { sectionHref } from '../lib/nav';
 
 const NAV_ITEMS = [
   { id: 'features', label: 'Zalety' },
@@ -9,7 +10,11 @@ const NAV_ITEMS = [
   { id: 'contact', label: 'Kontakt' },
 ];
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  isHome: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ isHome }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -62,7 +67,7 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex justify-between items-center">
           <a
-            href="#top"
+            href={isHome ? '#top' : '/'}
             className="focus-ring rounded-lg flex items-center space-x-2 text-2xl font-semibold"
           >
             <Camera
@@ -80,7 +85,7 @@ const Navbar: React.FC = () => {
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center space-x-8">
             {NAV_ITEMS.map(item => (
-              <NavLink key={item.id} href={`#${item.id}`} solid={solid} active={activeId === item.id}>
+              <NavLink key={item.id} href={sectionHref(item.id, isHome)} solid={solid} active={activeId === item.id}>
                 {item.label}
               </NavLink>
             ))}
@@ -127,7 +132,7 @@ const Navbar: React.FC = () => {
               {NAV_ITEMS.map(item => (
                 <a
                   key={item.id}
-                  href={`#${item.id}`}
+                  href={sectionHref(item.id, isHome)}
                   onClick={closeMobileMenu}
                   aria-current={activeId === item.id ? 'true' : undefined}
                   className={`focus-ring rounded-lg block py-3 font-medium transition-colors duration-300 hover:text-gold-ink ${

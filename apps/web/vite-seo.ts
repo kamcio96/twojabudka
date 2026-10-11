@@ -1,112 +1,15 @@
-// SEO/GEO: <head>, dane strukturalne i pliki dla botów (robots, sitemap, llms.txt, 404).
-// Treść strony trafia do HTML przez prerender (src/entry-server.tsx + prerender.mjs).
-// Dane wyłącznie z src/content (business, seo, packages) — bez ręcznie wpisanych kontaktów.
+// SEO/GEO: <head> w trybie dev i pliki dla botów (robots, sitemap, llms.txt, 404).
+// Przy buildzie <head> i treść każdej podstrony wstawia prerender (src/entry-server.tsx +
+// prerender.mjs); generator <head>: src/lib/head.ts, lista podstron: src/content/pages.ts.
+// Dane wyłącznie z src/content (business, seo, packages, pages) — bez ręcznie wpisanych kontaktów.
 // SEO_NOINDEX=true (np. środowisko testowe) → meta noindex i robots.txt blokujący wszystko.
-import type { HtmlTagDescriptor, Plugin } from 'vite';
+import type { Plugin } from 'vite';
 import { business } from './src/content/business';
 import { faq } from './src/content/faq';
 import { packages } from './src/content/packages';
+import { findPage, homePage, pages } from './src/content/pages';
 import { seo } from './src/content/seo';
-
-const esc = (s: string) =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-const abs = (path: string) => new URL(path, business.url).href;
-const homeUrl = abs('/');
-const businessId = `${homeUrl}#business`;
-
-const areaServed = [
-  ...business.cities.map(name => ({ '@type': 'City', name })),
-  { '@type': 'AdministrativeArea', name: business.region },
-];
-
-// Firma dojazdowa: bez adresu i bez cen (priceRange, Offer.price).
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'LocalBusiness',
-      '@id': businessId,
-      name: business.name,
-      description: seo.summary,
-      url: homeUrl,
-      telephone: business.phone.replace(/\s/g, ''),
-      email: business.email,
-      image: abs(seo.ogImage),
-      areaServed,
-      knowsLanguage: 'pl',
-      sameAs: [...Object.values(business.social), ...Object.values(business.google)],
-    },
-    {
-      '@type': 'Service',
-      name: 'Wynajem fotobudki',
-      serviceType: 'Fotobudka z wydrukami i asystentem',
-      description: `Fotobudka na ${seo.occasions.join(', ')}.`,
-      provider: { '@id': businessId },
-      areaServed,
-      hasOfferCatalog: {
-        '@type': 'OfferCatalog',
-        name: 'Pakiety',
-        itemListElement: packages.map(p => ({
-          '@type': 'Offer',
-          itemOffered: {
-            '@type': 'Service',
-            name: `Pakiet ${p.name} (${p.duration})`,
-            description: p.features.join(', '),
-          },
-        })),
-      },
-    },
-    {
-      '@type': 'FAQPage',
-      '@id': `${homeUrl}#faq`,
-      mainEntity: faq.map(f => ({
-        '@type': 'Question',
-        name: f.question,
-        acceptedAnswer: { '@type': 'Answer', text: f.answer },
-      })),
-    },
-    {
-      '@type': 'WebSite',
-      '@id': `${homeUrl}#website`,
-      url: homeUrl,
-      name: business.name,
-      inLanguage: 'pl-PL',
-      publisher: { '@id': businessId },
-    },
-  ],
-};
-
-const headTags = (noindex: boolean): HtmlTagDescriptor[] => {
-  const meta = (attrs: Record<string, string>): HtmlTagDescriptor => ({ tag: 'meta', attrs, injectTo: 'head' });
-  return [
-    { tag: 'title', children: esc(seo.title), injectTo: 'head' },
-    meta({ name: 'description', content: seo.description }),
-    ...(noindex ? [meta({ name: 'robots', content: 'noindex, nofollow' })] : []),
-    { tag: 'link', attrs: { rel: 'canonical', href: homeUrl }, injectTo: 'head' },
-    meta({ property: 'og:type', content: 'website' }),
-    meta({ property: 'og:locale', content: 'pl_PL' }),
-    meta({ property: 'og:site_name', content: business.name }),
-    meta({ property: 'og:url', content: homeUrl }),
-    meta({ property: 'og:title', content: seo.title }),
-    meta({ property: 'og:description', content: seo.description }),
-    meta({ property: 'og:image', content: abs(seo.ogImage) }),
-    meta({ property: 'og:image:width', content: '1200' }),
-    meta({ property: 'og:image:height', content: '630' }),
-    meta({ property: 'og:image:alt', content: seo.ogImageAlt }),
-    meta({ name: 'twitter:card', content: 'summary_large_image' }),
-    meta({ name: 'twitter:title', content: seo.title }),
-    meta({ name: 'twitter:description', content: seo.description }),
-    meta({ name: 'twitter:image', content: abs(seo.ogImage) }),
-    {
-      tag: 'script',
-      attrs: { type: 'application/ld+json' },
-      // `<` zamieniony, żeby tekst nie mógł zamknąć znacznika <script>.
-      children: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
-      injectTo: 'head',
-    },
-  ];
-};
+import { abs, esc, headHtml, homeUrl } from './src/lib/head';
 
 // Boty AI wymienione z nazwy, żeby jednoznacznie wiedziały, że mogą czytać i cytować stronę (GEO).
 // Bot z własną grupą ignoruje grupę `*`, więc grupa AI powtarza te same reguły.
@@ -143,14 +46,20 @@ const robotsTxt = (noindex: boolean) =>
         '',
       ].join('\n');
 
-const sitemapXml = () => `<?xml version="1.0" encoding="UTF-8"?>
+const sitemapXml = () => {
+  const lastmod = new Date().toISOString().slice(0, 10);
+  const urls = pages.map(p => `  <url>
+    <loc>${abs(p.path)}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>`);
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${homeUrl}</loc>
-    <lastmod>${new Date().toISOString().slice(0, 10)}</lastmod>
-  </url>
+${urls.join('\n')}
 </urlset>
 `;
+};
+
+const subpages = pages.filter(p => p.kind !== 'home');
 
 // https://llmstxt.org — zwięzły opis firmy dla modeli AI.
 const llmsTxt = () => `# ${business.name}
@@ -177,7 +86,7 @@ ${faq.map(f => `### ${f.question}\n${f.answer}`).join('\n\n')}
 
 ## Kontakt
 - [Strona Twoja Budka](${homeUrl}): oferta, pakiety, galeria
-- [Formularz wyceny](${abs('/#contact')}): data, miejsce i okazja
+${subpages.map(p => `- [${p.label}](${abs(p.path)}): ${p.description}\n`).join('')}- [Formularz wyceny](${abs('/#contact')}): data, miejsce i okazja
 - [Telefon ${business.phone}](${business.phoneHref})
 - [E-mail ${business.email}](mailto:${business.email})
 
@@ -234,9 +143,14 @@ export default function seoPlugin(): Plugin {
     configResolved(config) {
       ssrBuild = Boolean(config.build.ssr);
     },
+    // Dev: <head> strony z adresu (Vite serwuje index.html dla każdej ścieżki).
+    // Build: znacznik zostaje, prerender.mjs wstawia <head> osobno dla każdej podstrony.
     transformIndexHtml: {
       order: 'pre',
-      handler: () => headTags(noindex),
+      handler: (html, ctx) =>
+        ctx.server
+          ? html.replace('<!--app-head-->', headHtml(findPage(ctx.originalUrl ?? ctx.path) ?? homePage, { noindex }))
+          : html,
     },
     generateBundle() {
       // Build SSR (prerender) nie publikuje plików — tylko build klienta.

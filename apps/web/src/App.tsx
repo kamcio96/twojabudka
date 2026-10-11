@@ -1,16 +1,19 @@
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Features from './components/Features';
-import Gallery from './components/Gallery';
-import HowItWorks from './components/HowItWorks';
-import Pricing from './components/Pricing';
-import Reviews from './components/Reviews';
-import ServiceArea from './components/ServiceArea';
-import Faq from './components/Faq';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
+import { findPage, homePage } from './content/pages';
+import { routes } from './routes';
 
-function App() {
+interface AppProps {
+  // Adres strony: przy prerenderze z src/content/pages.ts, w przeglądarce location.pathname.
+  path: string;
+}
+
+function App({ path }: AppProps) {
+  const page = findPage(path) ?? homePage;
+  const Page = routes[page.path];
+  const isHome = page.kind === 'home';
+
   return (
     <div className="font-montserrat text-navy-900">
       <a
@@ -19,19 +22,12 @@ function App() {
       >
         Przejdź do treści
       </a>
-      <Navbar />
+      <Navbar isHome={isHome} />
       <main id="main">
-        <Hero />
-        <Features />
-        <Gallery />
-        <HowItWorks />
-        <Pricing />
-        <Reviews />
-        <ServiceArea />
-        <Faq />
-        <ContactForm />
+        <Page />
+        <ContactForm eventType={page.eventType} />
       </main>
-      <Footer />
+      <Footer isHome={isHome} />
     </div>
   );
 }

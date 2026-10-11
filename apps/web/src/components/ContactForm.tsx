@@ -40,8 +40,14 @@ const inputClass = (hasError: boolean) =>
     hasError ? 'border-red-600' : 'border-gray-300'
   } rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all duration-300`;
 
-const ContactForm: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
+interface ContactFormProps {
+  // Okazja wybrana z góry na podstronie okazji (np. „Wesele”); musi być jedną z EVENT_TYPES.
+  eventType?: string;
+}
+
+const ContactForm: React.FC<ContactFormProps> = ({ eventType = '' }) => {
+  const initialForm: FormData = { ...EMPTY_FORM, eventType };
+  const [formData, setFormData] = useState<FormData>(initialForm);
   const [errors, setErrors] = useState<ContactFieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -97,7 +103,7 @@ const ContactForm: React.FC = () => {
       if (body.ok) {
         track('contact-submit', { eventType: formData.eventType || 'brak' });
         setSubmitted(true);
-        setFormData(EMPTY_FORM);
+        setFormData(initialForm);
         startedAt.current = Date.now();
       } else if (body.error === 'validation') {
         setErrors(body.fields);

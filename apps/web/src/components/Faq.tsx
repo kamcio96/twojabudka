@@ -1,17 +1,23 @@
 import React, { useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
-import { faq } from '../content/faq';
+import { faq as homeFaq, type FaqItem } from '../content/faq';
 
 // Natywne <details>: działa bez JS i z klawiatury; treść odpowiedzi jest w HTML także po zwinięciu.
-const Faq: React.FC = () => {
+interface FaqProps {
+  // Pytania podstrony (te same co w `FAQPage` z src/content/pages.ts); domyślnie FAQ strony głównej.
+  items?: FaqItem[];
+  className?: string;
+}
+
+const Faq: React.FC<FaqProps> = ({ items = homeFaq, className = 'bg-white' }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const isVisible = useScrollAnimation(sectionRef, 0.1);
 
   return (
     <section
       id="faq"
-      className={`section-padding bg-white ${isVisible ? 'is-visible' : ''}`}
+      className={`section-padding ${className} ${isVisible ? 'is-visible' : ''}`}
       ref={sectionRef}
     >
       <div className="container mx-auto px-4 max-w-3xl">
@@ -23,7 +29,7 @@ const Faq: React.FC = () => {
         </p>
 
         <div className="reveal border-t border-gray-200" style={{ transitionDelay: '0.2s' }}>
-          {faq.map(item => (
+          {items.map(item => (
             <details key={item.question} className="group border-b border-gray-200">
               <summary className="focus-ring rounded flex items-center justify-between gap-4 py-5 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 <h3 className="text-lg font-semibold">{item.question}</h3>

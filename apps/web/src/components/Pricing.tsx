@@ -1,16 +1,19 @@
 import React, { useRef } from 'react';
 import { Check, Clock, Star, Gift } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
-import { packages, type PackageIcon } from '../content/packages';
+import { listPl, packages, priceFactors, type PackageIcon } from '../content/packages';
 
 const iconMap: Record<PackageIcon, typeof Clock> = { Clock, Star, Gift };
 
 // Cechy pakietu bazowego; pozostałe w wyższych pakietach wyróżniamy jako dodatki
 const baseFeatures = new Set(packages[0].features);
 
-const PRICE_FACTORS = ['czasu trwania pakietu', 'terminu', 'odległości dojazdu', 'wybranych dodatków'];
+interface PricingProps {
+  // Podstrony z własną sekcją o cenie ukrywają krótką notkę pod pakietami.
+  showPriceNote?: boolean;
+}
 
-const Pricing: React.FC = () => {
+const Pricing: React.FC<PricingProps> = ({ showPriceNote = true }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const isVisible = useScrollAnimation(sectionRef, 0.1);
 
@@ -95,11 +98,13 @@ const Pricing: React.FC = () => {
           })}
         </div>
 
-        <p className="reveal text-center text-gray-600 max-w-2xl mx-auto mt-14" style={{ transitionDelay: '0.4s' }}>
-          <span className="font-semibold text-navy-900">Od czego zależy cena?</span> Od{' '}
-          {PRICE_FACTORS.join(', ').replace(/, ([^,]*)$/, ' i $1')}. Wyślij zapytanie, a przygotujemy
-          wycenę dla Twojej imprezy.
-        </p>
+        {showPriceNote && (
+          <p className="reveal text-center text-gray-600 max-w-2xl mx-auto mt-14" style={{ transitionDelay: '0.4s' }}>
+            <span className="font-semibold text-navy-900">Od czego zależy cena?</span> Od{' '}
+            {listPl(priceFactors.map(f => f.of))}. Wyślij zapytanie, a przygotujemy
+            wycenę dla Twojej imprezy.
+          </p>
+        )}
       </div>
     </section>
   );

@@ -19,11 +19,12 @@ hotjar.initialize({ id: 6409555, sv: 6 });
 const root = document.getElementById('root')!;
 const app = (
   <StrictMode>
-    <App />
+    <App path={window.location.pathname} />
   </StrictMode>
 );
 
-// W buildzie #root zawiera HTML wyrenderowany przez prerender.mjs — React go przejmuje (hydracja).
+// W buildzie #root zawiera HTML tej podstrony wyrenderowany przez prerender.mjs — React go przejmuje
+// (hydracja), więc renderuje tę samą stronę co prerender (adres z location.pathname).
 // W trybie dev #root jest pusty.
 if (root.hasChildNodes()) {
   hydrateRoot(root, app);
